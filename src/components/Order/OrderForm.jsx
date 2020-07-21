@@ -1,19 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Button, Form, Container, Grid } from "semantic-ui-react";
+import { Button, Container, Grid, FormField } from "semantic-ui-react";
 import { connect } from "react-redux";
 import { useHistory } from "react-router-dom";
-import styled from "styled-components";
 
 import Layout from "../Layout";
 import BackButton from "../BackButton";
 import ConfirmationModal from "./ConfirmationModal";
 import { setOrderId } from "../../redux/actions";
-
-const StyledForm = styled(Form)`
-  &&& label {
-    color: unset;
-  }
-`;
+import Form from "../Form";
 
 const OrderForm = ({ productCode, price, setOrderId }) => {
   const history = useHistory();
@@ -26,6 +20,7 @@ const OrderForm = ({ productCode, price, setOrderId }) => {
     if (!productCode || !price) {
       history.push("/order");
     }
+    // eslint-disable-next-line
   }, []);
 
   const handleSubmit = async () => {
@@ -97,23 +92,23 @@ const OrderForm = ({ productCode, price, setOrderId }) => {
         <Grid centered>
           <Grid.Row>
             <Grid.Column color="black" computer={5} tablet={8} mobile={10}>
-              <StyledForm onSubmit={handleSubmit}>
-                <Form.Field>
+              <Form onSubmit={handleSubmit}>
+                <FormField>
                   <label>Name</label>
                   <input
                     placeholder="Name"
                     value={name}
                     onChange={(e) => handleInput(e)}
                   />
-                </Form.Field>
-                <Form.Field disabled>
+                </FormField>
+                <FormField disabled>
                   <label>Product</label>
                   <input value={productCode} />
-                </Form.Field>
-                <Form.Field disabled>
+                </FormField>
+                <FormField disabled>
                   <label>Price</label>
                   <input value={price} />
-                </Form.Field>
+                </FormField>
                 <Button
                   primary
                   type="submit"
@@ -122,7 +117,7 @@ const OrderForm = ({ productCode, price, setOrderId }) => {
                 >
                   Submit
                 </Button>
-              </StyledForm>
+              </Form>
             </Grid.Column>
           </Grid.Row>
         </Grid>
