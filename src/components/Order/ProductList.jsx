@@ -7,6 +7,7 @@ import jacobs12 from "../../images/jacobs12.png";
 import JacobsSlide from "./JacobsSlide";
 import Layout from "../Layout";
 import BackButton from "../BackButton";
+import { Link } from "react-router-dom";
 
 const ProductList = () => {
   return (
@@ -38,6 +39,7 @@ const ProductList = () => {
             productCode="JACOBS12"
           />
         </Slider>
+        <Link to="/check">Or check your order here!</Link>
       </Container>
     </Layout>
   );

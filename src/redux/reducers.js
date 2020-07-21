@@ -4,6 +4,7 @@ const {
   SET_SELECTED_PRODUCT,
   SET_ORDER_ID,
   SET_PAYMENT_STATUS,
+  SET_ORDER_STATUS,
 } = require("./actions");
 
 const initialOrders = {
@@ -20,6 +21,8 @@ function ordersReducer(state = initialOrders, action) {
       return { ...state, orderId: action.orderId };
     case SET_PAYMENT_STATUS:
       return { ...state, paymentStatus: action.paymentStatus };
+    case SET_ORDER_STATUS:
+      return { ...state, orderStatus: action.orderStatus };
     default:
       return state;
   }

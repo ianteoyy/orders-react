@@ -1,8 +1,10 @@
 import React from "react";
-import "./App.css";
 import Home from "./components/Home/Home";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
+
+import "./App.css";
 import Order from "./components/Order";
+import CheckOrder from "./components/CheckOrder";
 
 function App() {
   return (
@@ -13,6 +15,9 @@ function App() {
         </Route>
         <Route path="/order">
           <Order />
+        </Route>
+        <Route exact path="/check">
+          <CheckOrder />
         </Route>
       </Switch>
     </BrowserRouter>
