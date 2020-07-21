@@ -81,6 +81,7 @@ const ConfirmationModal = ({
         result: result,
       }),
     });
+    history.push('/order/acknowledgement')
   };
 
   return (
