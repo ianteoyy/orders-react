@@ -1,11 +1,26 @@
 import React, { useState, useEffect } from "react";
-import { Button, Form, Container } from "semantic-ui-react";
+import { Button, Form, Container, Grid } from "semantic-ui-react";
 import { connect } from "react-redux";
 import { useHistory } from "react-router-dom";
+import styled from "styled-components";
 
-const OrderForm = ({ productCode, price }) => {
+import Layout from "../Layout";
+import BackButton from "../BackButton";
+import ConfirmationModal from "./ConfirmationModal";
+import { setOrderId } from "../../redux/actions";
+
+const StyledForm = styled(Form)`
+  &&& label {
+    color: unset;
+  }
+`;
+
+const OrderForm = ({ productCode, price, setOrderId }) => {
   const history = useHistory();
   const [name, setName] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [paymentId, setPaymentId] = useState("");
+  const [confirmationModal, setConfirmationModal] = useState(false);
 
   useEffect(() => {
     if (!productCode || !price) {
@@ -13,8 +28,16 @@ const OrderForm = ({ productCode, price }) => {
     }
   }, []);
 
-  const handleSubmit = () => {
-    fetch("https://tyy-orders.herokuapp.com/orders", {
+  const handleSubmit = async () => {
+    setSubmitting(true);
+    const generatedPaymentId = await createOrder(name, productCode, price);
+    setPaymentId(generatedPaymentId);
+    setConfirmationModal(true);
+  };
+
+  const createOrder = async (name, productCode, price) => {
+    let generatedPaymentId;
+    let orderId = await fetch("https://tyy-orders.herokuapp.com/orders", {
       headers: {
         "Content-Type": "application/json",
       },
@@ -26,7 +49,41 @@ const OrderForm = ({ productCode, price }) => {
       }),
     })
       .then((res) => res.json())
-      .then((res) => console.log(res));
+      .then((res) => {
+        return res.id;
+      });
+
+    if (orderId) {
+      setOrderId(orderId);
+      generatedPaymentId = await createPayment(price, orderId);
+    }
+
+    return generatedPaymentId;
+  };
+
+  const createPayment = async (amount) => {
+    const generatedPaymentId = await fetch(
+      "https://tyy-orders.herokuapp.com/payments",
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        method: "post",
+        body: JSON.stringify({
+          amount: amount,
+        }),
+      }
+    )
+      .then((res) => res.json())
+      .then((res) => {
+        if (res.id) {
+          return res.id;
+        }
+      });
+
+    if (generatedPaymentId) {
+      return generatedPaymentId;
+    }
   };
 
   const handleInput = (e) => {
@@ -34,30 +91,48 @@ const OrderForm = ({ productCode, price }) => {
   };
 
   return (
-    <Container>
-      <div
-        onClick={() => {
-          history.push("/order");
-        }}
-      >
-        Back
-      </div>
-      <Form onSubmit={handleSubmit}>
-        <Form.Field>
-          <label>Name</label>
-          <input placeholder="Name" onChange={(e) => handleInput(e)} />
-        </Form.Field>
-        <Form.Field disabled>
-          <label>Product</label>
-          <input value={productCode} />
-        </Form.Field>
-        <Form.Field disabled>
-          <label>Price</label>
-          <input value={price} />
-        </Form.Field>
-        <Button type="submit">Submit</Button>
-      </Form>
-    </Container>
+    <Layout>
+      <BackButton to="/order">Back</BackButton>
+      <Container>
+        <Grid centered>
+          <Grid.Row>
+            <Grid.Column color="black" computer={5} tablet={8} mobile={10}>
+              <StyledForm onSubmit={handleSubmit}>
+                <Form.Field>
+                  <label>Name</label>
+                  <input
+                    placeholder="Name"
+                    value={name}
+                    onChange={(e) => handleInput(e)}
+                  />
+                </Form.Field>
+                <Form.Field disabled>
+                  <label>Product</label>
+                  <input value={productCode} />
+                </Form.Field>
+                <Form.Field disabled>
+                  <label>Price</label>
+                  <input value={price} />
+                </Form.Field>
+                <Button
+                  primary
+                  type="submit"
+                  disabled={submitting}
+                  loading={submitting}
+                >
+                  Submit
+                </Button>
+              </StyledForm>
+            </Grid.Column>
+          </Grid.Row>
+        </Grid>
+      </Container>
+      <ConfirmationModal
+        isOpen={confirmationModal}
+        setIsOpen={setConfirmationModal}
+        paymentId={paymentId}
+      />
+    </Layout>
   );
 };
 
@@ -65,4 +140,8 @@ const mapStateToProps = ({ ordersReducer: { productCode, price } }) => {
   return { productCode, price };
 };
 
-export default connect(mapStateToProps)(OrderForm);
+const mapDispatchToProps = (dispatch) => ({
+  setOrderId: (orderId) => dispatch(setOrderId(orderId)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(OrderForm);

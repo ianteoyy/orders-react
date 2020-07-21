@@ -1,26 +1,12 @@
 import React from "react";
+import Slider from "react-slick";
 import { Container } from "semantic-ui-react";
+
 import jacobs03 from "../../images/jacobs03.png";
 import jacobs12 from "../../images/jacobs12.png";
 import JacobsSlide from "./JacobsSlide";
-import Slider from "react-slick";
-import styled from "styled-components";
-import { fadeIn } from "../keyframes";
-import { Link } from "react-router-dom";
-
-const Layout = styled.div`
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  animation: ${fadeIn} 1s;
-`;
-
-const BackButton = styled(Link)`
-  position: absolute;
-  top: 3rem;
-  left: 3rem;
-`;
+import Layout from "../Layout";
+import BackButton from "../BackButton";
 
 const ProductList = () => {
   return (
