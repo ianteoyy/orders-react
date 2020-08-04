@@ -58,7 +58,7 @@ const OrderForm = ({ productCode, price, setOrderId }) => {
 
   const createPayment = async (amount) => {
     const generatedPaymentId = await fetch(
-      "https://tyy-orders.herokuapp.com/payments",
+      "https://tyy-payments.herokuapp.com/payments",
       {
         headers: {
           "Content-Type": "application/json",

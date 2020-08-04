@@ -45,7 +45,7 @@ const ConfirmationModal = ({
 
   const verifyPayment = async (paymentId, orderId) => {
     let paymentResult = await fetch(
-      "https://tyy-orders.herokuapp.com/payments/confirm",
+      "https://tyy-payments.herokuapp.com/payments/confirm",
       {
         headers: {
           "Content-Type": "application/json",
